@@ -273,10 +273,15 @@ Avviato il setup dell'auto-deploy Git → Cloudflare Pages (vedi piano sez. 10).
   `studio/node_modules|dist|.sanity`. Aggiunto **`.nvmrc`** per fissare la versione di Node in build.
 - **GitHub (FATTO):** repo **privato** → **https://github.com/leonpresepi/sacrelia**
   (account `leonpresepi`, login email+password, non social). Push di `main` OK.
-- **Cloudflare Pages (IN CORSO):** cancellato il vecchio progetto **Direct-Upload** (non convertibile
-  a Git) e creato uno **nuovo collegato a Git** con lo stesso nome `sacrelia` (per riavere
-  `sacrelia.pages.dev`). GitHub App "Cloudflare Pages" installata sul repo. Build settings:
-  framework **Astro**, build command **`npm run build`**, output **`dist`**, production branch **`main`**.
+- **Cloudflare (FATTO — sito LIVE):** cancellato il vecchio progetto **Direct-Upload** (non convertibile
+  a Git) e creato uno **nuovo collegato a Git** con lo stesso nome `sacrelia`. GitHub App "Cloudflare"
+  installata sul repo. Build settings: framework **Astro**, build command **`npm run build`**,
+  output **`dist`**, production branch **`main`**.
+  - ⚠️ Cloudflare ora **unifica Pages dentro Workers**: il progetto Git è nato come **Worker**
+    con asset statici, quindi l'URL di default NON è `sacrelia.pages.dev` ma
+    **https://sacrelia.onoratomaurizio.workers.dev/** (sottodominio account = `onoratomaurizio`).
+    Verificato online: **HTTP 200**, contenuti Sanity caricati. Il vecchio `sacrelia.pages.dev`
+    è sparito con il progetto Direct-Upload cancellato.
 - **Variabili d'ambiente su Cloudflare (Production):**
   - `NODE_VERSION = 24.18.0`
   - `PUBLIC_SANITY_PROJECT_ID = nvhc1tge`
