@@ -376,3 +376,17 @@ primo articolo** nello Studio; 3) avvisarmi per rebuild+deploy così va live (fi
 
 **Piano editoriale (calendario 12 settimane + guida di stile):** vedi **`JOURNAL.md`** (creato 2026-07-01).
 **Nota:** il flusso contenuti→build→deploy è lo stesso delle opere (sezioni 9-10).
+
+### 11-ter. Immagini inline nel testo ricco (FATTO 2026-07-01)
+
+Abilitate le **foto in mezzo al testo** (articoli, pagine, descrizioni opere), oltre a grassetto/
+corsivo/titoli/elenchi/link/citazioni già disponibili di default:
+- **Studio:** aggiunto blocco `image` (con campi **alt** + **caption**) all'editor `localeBlock`
+  (`studio/schemaTypes/locale.ts`) → vale per `article`, `page`, `artwork`.
+- **Sito:** nuovo renderer condiviso `src/lib/portableText.ts` (`renderBlocks`) che serializza le
+  immagini in `<figure>` ottimizzate via CDN Sanity (`urlForImage`, width 1600, `loading=lazy`);
+  usato da ArticleView/ArtworkView/PageView/LegalView. Stile `.rich figure/img/figcaption` in `global.css`.
+- **Nota d'uso:** i corpi sono localizzati **campo-per-campo**, quindi la foto va inserita nella lingua
+  in cui scrivi (per averla in tutte le 5 lingue, si inserisce in ciascun corpo).
+- ⚠️ **Richiede `sanity deploy`** dello Studio per far comparire il pulsante immagine nell'editor
+  (il login browser del CLI dava errori → usare token: `SANITY_AUTH_TOKEN`, oppure `sanity login`).
