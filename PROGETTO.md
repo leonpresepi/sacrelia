@@ -2,7 +2,7 @@
 
 > Documento vivo. Raccoglie visione, requisiti e decisioni del progetto.
 > Aggiornare a ogni nuova informazione rilevante.
-> Ultimo aggiornamento: 2026-06-29
+> Ultimo aggiornamento: 2026-07-01
 
 ---
 
@@ -263,6 +263,41 @@ Note/avvertenze per domani:
 - Contenuti reali: **foto professionali alta risoluzione**, `siteSettings` (hero, contatti),
   testi pagine editoriali, **testo legale privacy**.
 - Chiave **Web3Forms** per attivare il form contatti.
+
+### 10-bis. AUTO-DEPLOY — IN CORSO (2026-07-01)
+
+Avviato il setup dell'auto-deploy Git → Cloudflare Pages (vedi piano sez. 10). Stato:
+
+- **Repo Git inizializzato** in locale (branch `main`). `.gitignore` rafforzato: esclude
+  `.env`, `*.token`/`.cf-token`/`.sanity-token`, `.wrangler/`, `.playwright-mcp/`,
+  `studio/node_modules|dist|.sanity`. Aggiunto **`.nvmrc`** per fissare la versione di Node in build.
+- **GitHub (FATTO):** repo **privato** → **https://github.com/leonpresepi/sacrelia**
+  (account `leonpresepi`, login email+password, non social). Push di `main` OK.
+- **Cloudflare Pages (IN CORSO):** cancellato il vecchio progetto **Direct-Upload** (non convertibile
+  a Git) e creato uno **nuovo collegato a Git** con lo stesso nome `sacrelia` (per riavere
+  `sacrelia.pages.dev`). GitHub App "Cloudflare Pages" installata sul repo. Build settings:
+  framework **Astro**, build command **`npm run build`**, output **`dist`**, production branch **`main`**.
+- **Variabili d'ambiente su Cloudflare (Production):**
+  - `NODE_VERSION = 24.18.0`
+  - `PUBLIC_SANITY_PROJECT_ID = nvhc1tge`
+  - `PUBLIC_SANITY_DATASET = production`
+  - `PUBLIC_SANITY_API_VERSION = 2024-01-01`
+  - `PUBLIC_WEB3FORMS_KEY` → **da aggiungere** quando l'utente avrà la chiave del form.
+- **Fix build importante:** la prima build falliva con
+  `node:module does not provide an export named 'registerHooks'`. Causa: **Node 22.12.0 troppo
+  vecchio** (Astro 7/Vite richiedono `registerHooks`, disponibile da **Node ≥ 22.15**). Risolto
+  allineando alla versione locale che funziona: **Node 24.18.0** (`.nvmrc` + var `NODE_VERSION`);
+  aggiornato anche `engines` in `package.json` a `>=22.15.0`.
+- **Come rilanciare un deploy:** basta un **push su `main`** (Cloudflare ribuilda in automatico) —
+  non serve cercare "Retry" nel dashboard.
+- **Scelta utente:** **nessun `noindex`** su `sacrelia.pages.dev` (anteprima resta indicizzabile).
+- **Da completare:**
+  1. verificare che la build torni **Success** con le 4 variabili;
+  2. **Passo 3 — webhook Sanity → Cloudflare Deploy Hook** (guidato dal pannello sanity.io/manage):
+     Publish in Sanity ⇒ rebuild automatico del sito;
+  3. aggiungere `PUBLIC_WEB3FORMS_KEY` quando disponibile;
+  4. **revocare i vecchi token** Cloudflare/Sanity passati in chat nelle sessioni precedenti;
+  5. collegare il dominio **`sacrelia.com`** quando acquistato.
 
 ---
 
