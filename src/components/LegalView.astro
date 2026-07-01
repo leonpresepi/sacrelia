@@ -1,5 +1,5 @@
 ---
-import { toHTML } from '@portabletext/to-html';
+import { renderBlocks } from '../lib/portableText';
 import { getLangFromUrl, useTranslations, pickLocale, pickLocaleBlocks } from '../i18n/utils';
 import { getSiteSettings, type Page } from '../lib/queries';
 import Divider from './Divider.astro';
@@ -18,7 +18,7 @@ const t = useTranslations(lang);
 
 const title = (page && pickLocale(page.title, lang)) || defaultTitle;
 const blocks = page ? pickLocaleBlocks(page.body, lang) : [];
-const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+const bodyHtml = renderBlocks(blocks);
 
 const settings = await getSiteSettings();
 const email = settings?.contactEmail;

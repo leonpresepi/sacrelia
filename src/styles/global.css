@@ -39,6 +39,23 @@ h1, h2, h3 {
   letter-spacing: -0.01em;
 }
 
+/* Foto inserite nel testo ricco (Portable Text → <figure>), es. articoli del Journal. */
+.rich figure {
+  margin: 2.25rem 0;
+}
+.rich figure img {
+  width: 100%;
+  height: auto;
+  background-color: var(--color-bone);
+}
+.rich figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--color-muted);
+}
+
 /* Finto "scatto a lume di candela": serve solo in anteprima per simulare una foto reale. */
 .hero-photo-faux {
   background-color: #0c0a07;

@@ -19,7 +19,32 @@ function localeFields(type: 'string' | 'text' | 'array') {
       name: lang.id,
       title: lang.title,
       type,
-      ...(type === 'array' ? { of: [{ type: 'block' }] } : {}),
+      ...(type === 'array'
+        ? {
+            of: [
+              { type: 'block' },
+              {
+                // Foto da inserire in mezzo al testo (tra un paragrafo e l'altro).
+                type: 'image',
+                options: { hotspot: true },
+                fields: [
+                  {
+                    name: 'alt',
+                    type: 'string',
+                    title: 'Testo alternativo',
+                    description: 'Descrive la foto per SEO e accessibilità. Consigliato.',
+                  },
+                  {
+                    name: 'caption',
+                    type: 'string',
+                    title: 'Didascalia',
+                    description: 'Testo mostrato sotto la foto (facoltativo).',
+                  },
+                ],
+              },
+            ],
+          }
+        : {}),
       ...(index === 0 ? {} : { fieldset: 'translations' }),
     }),
   );

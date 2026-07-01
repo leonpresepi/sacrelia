@@ -1,6 +1,6 @@
 ---
-import { toHTML } from '@portabletext/to-html';
 import { urlForImage } from '../lib/sanity';
+import { renderBlocks } from '../lib/portableText';
 import {
   pickLocale,
   pickLocaleBlocks,
@@ -24,7 +24,7 @@ const t = useTranslations(lang);
 const title = pickLocale(article.title, lang);
 const excerpt = pickLocale(article.excerpt, lang);
 const blocks = pickLocaleBlocks(article.body, lang);
-const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+const bodyHtml = renderBlocks(blocks);
 const date = formatDate(article.publishedAt, lang);
 const catLabel = article.category
   ? t(`journal.cat.${article.category}` as Parameters<typeof t>[0])

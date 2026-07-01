@@ -1,6 +1,6 @@
 ---
-import { toHTML } from '@portabletext/to-html';
 import { urlForImage } from '../lib/sanity';
+import { renderBlocks } from '../lib/portableText';
 import {
   pickLocale,
   pickLocaleBlocks,
@@ -22,7 +22,7 @@ const title = pickLocale(artwork.title, lang);
 const short = pickLocale(artwork.shortDescription, lang);
 const materials = pickLocale(artwork.materials, lang);
 const blocks = pickLocaleBlocks(artwork.description, lang);
-const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+const bodyHtml = renderBlocks(blocks);
 
 function img(source: unknown, w: number) {
   return urlForImage(source).width(w).auto('format').url();
