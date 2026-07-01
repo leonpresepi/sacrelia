@@ -1,0 +1,123 @@
+---
+import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const formKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+
+const fieldWrap = 'flex flex-col gap-2';
+const labelCls = 'text-[11px] uppercase tracking-[0.2em] text-muted';
+const inputCls =
+  'bg-transparent border-b border-charcoal/20 py-2 text-ink focus:border-bronze focus:outline-none transition-colors';
+---
+
+<form
+  id="contact-form"
+  class="space-y-7"
+  data-success={t('contact.success')}
+  data-error={t('contact.error')}
+  data-sending={t('contact.sending')}
+  data-submit={t('contact.submit')}
+  data-interested={t('contact.interested')}
+>
+  <input type="hidden" name="access_key" value={formKey} />
+  <input type="hidden" name="subject" id="cf-subject" value={`Sacrelia — ${t('contact.title')}`} />
+  <input type="hidden" name="from_locale" value={lang} />
+  <input type="hidden" name="from_page" id="cf-page" value="" />
+  {/* Honeypot anti-spam: invisibile agli umani */}
+  <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
+
+  <p id="cf-interested" class="hidden text-sm text-bronze"></p>
+
+  <div class={fieldWrap}>
+    <label class={labelCls} for="cf-name">{t('contact.name')}</label>
+    <input class={inputCls} type="text" id="cf-name" name="name" required autocomplete="name" />
+  </div>
+
+  <div class={fieldWrap}>
+    <label class={labelCls} for="cf-email">{t('contact.email')}</label>
+    <input class={inputCls} type="email" id="cf-email" name="email" required autocomplete="email" />
+  </div>
+
+  <div class={fieldWrap}>
+    <label class={labelCls} for="cf-phone">
+      {t('contact.phone')} <span class="lowercase tracking-normal">({t('contact.optional')})</span>
+    </label>
+    <input class={inputCls} type="tel" id="cf-phone" name="phone" autocomplete="tel" />
+  </div>
+
+  <div class={fieldWrap}>
+    <label class={labelCls} for="cf-message">{t('contact.message')}</label>
+    <textarea class={inputCls} id="cf-message" name="message" rows="4" required></textarea>
+  </div>
+
+  <label class="flex items-start gap-3 text-sm text-muted leading-relaxed">
+    <input type="checkbox" name="consent" required class="mt-1 accent-bronze" />
+    <span>
+      {t('contact.consent')}{' '}
+      <a href={localizePath('/privacy', lang)} class="underline hover:text-bronze">{t('legal.privacy')}</a>
+    </span>
+  </label>
+
+  <button
+    type="submit"
+    class="bg-charcoal text-ivory px-8 py-3 text-sm uppercase tracking-wider hover:bg-ink transition-colors disabled:opacity-50"
+  >
+    {t('contact.submit')}
+  </button>
+
+  <p id="cf-status" class="text-sm" role="status" aria-live="polite"></p>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  if (form) {
+    const status = document.getElementById('cf-status') as HTMLParagraphElement;
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    const pageInput = document.getElementById('cf-page') as HTMLInputElement;
+    pageInput.value = location.href;
+
+    // Pre-compilazione "Richiesta su <opera>" dal parametro ?opera=
+    const opera = new URLSearchParams(location.search).get('opera');
+    if (opera) {
+      const note = document.getElementById('cf-interested') as HTMLParagraphElement;
+      note.textContent = `${form.dataset.interested}: ${opera}`;
+      note.classList.remove('hidden');
+      const subject = document.getElementById('cf-subject') as HTMLInputElement;
+      subject.value = `Sacrelia — ${opera}`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const honeypot = form.elements.namedItem('botcheck') as HTMLInputElement;
+      if (honeypot && honeypot.checked) return; // bot
+
+      status.textContent = '';
+      status.className = 'text-sm';
+      btn.disabled = true;
+      btn.textContent = form.dataset.sending ?? '…';
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: new FormData(form),
+        });
+        const json = await res.json();
+        if (json.success) {
+          form.reset();
+          status.className = 'text-sm text-bronze';
+          status.textContent = form.dataset.success ?? '';
+        } else {
+          throw new Error(json.message ?? 'error');
+        }
+      } catch {
+        status.className = 'text-sm text-red-700';
+        status.textContent = form.dataset.error ?? '';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = form.dataset.submit ?? '';
+      }
+    });
+  }
+</script>

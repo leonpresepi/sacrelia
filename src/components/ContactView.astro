@@ -1,0 +1,59 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getSiteSettings } from '../lib/queries';
+import ContactForm from './ContactForm.astro';
+import Divider from './Divider.astro';
+import StarMotif from './StarMotif.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const settings = await getSiteSettings();
+const email = settings?.contactEmail;
+const phone = settings?.contactPhone;
+const instagram = settings?.instagram;
+const hasDirect = Boolean(email || phone || instagram);
+---
+
+<section class="mx-auto max-w-5xl px-6 py-20 md:py-24">
+  <div class="text-center">
+    <p class="text-xs uppercase tracking-[0.3em] text-bronze mb-5">{t('site.tagline')}</p>
+    <h1 class="font-serif text-4xl md:text-5xl text-charcoal">{t('contact.title')}</h1>
+    <p class="mt-5 max-w-xl mx-auto text-muted leading-relaxed">{t('contact.intro')}</p>
+    <Divider class="mt-10" />
+  </div>
+
+  <div class={`mt-14 ${hasDirect ? 'grid lg:grid-cols-2 gap-14' : 'max-w-xl mx-auto'}`}>
+    <ContactForm />
+
+    {
+      hasDirect && (
+        <aside class="lg:pl-6 lg:border-l border-bone">
+          <div class="flex items-center gap-3 text-bronze mb-6">
+            <StarMotif class="w-3.5 h-3.5" />
+            <span class="text-[11px] uppercase tracking-[0.3em]">{t('contact.direct')}</span>
+          </div>
+          <ul class="space-y-4 text-ink">
+            {email && (
+              <li>
+                <a href={`mailto:${email}`} class="hover:text-bronze transition-colors">{email}</a>
+              </li>
+            )}
+            {phone && (
+              <li>
+                <a href={`tel:${phone}`} class="hover:text-bronze transition-colors">{phone}</a>
+              </li>
+            )}
+            {instagram && (
+              <li>
+                <a href={instagram} target="_blank" rel="noopener" class="hover:text-bronze transition-colors">
+                  Instagram
+                </a>
+              </li>
+            )}
+          </ul>
+        </aside>
+      )
+    }
+  </div>
+</section>

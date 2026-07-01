@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeContent from '../../components/HomeContent.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// Lingue non-default (l'inglese vive sulla root, senza prefisso).
+export function getStaticPaths() {
+  return [{ params: { lang: 'it' } }, { params: { lang: 'de' } }, { params: { lang: 'fr' } }, { params: { lang: 'es' } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('home.hero.title')} description={t('home.hero.lead')} path="/" overlayHeader>
+  <HomeContent />
+</BaseLayout>

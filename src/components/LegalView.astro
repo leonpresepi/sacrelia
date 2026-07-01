@@ -1,0 +1,67 @@
+---
+import { toHTML } from '@portabletext/to-html';
+import { getLangFromUrl, useTranslations, pickLocale, pickLocaleBlocks } from '../i18n/utils';
+import { getSiteSettings, type Page } from '../lib/queries';
+import Divider from './Divider.astro';
+
+interface Props {
+  page: Page | null;
+  /** Titolo di riserva (es. "Privacy Policy") se il CMS è vuoto. */
+  defaultTitle: string;
+  /** Messaggio mostrato quando non c'è ancora il testo. */
+  emptyMessage: string;
+}
+const { page, defaultTitle, emptyMessage } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const title = (page && pickLocale(page.title, lang)) || defaultTitle;
+const blocks = page ? pickLocaleBlocks(page.body, lang) : [];
+const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+
+const settings = await getSiteSettings();
+const email = settings?.contactEmail;
+---
+
+<section class="mx-auto max-w-3xl px-6 py-20 md:py-24">
+  <h1 class="font-serif text-3xl md:text-4xl text-charcoal text-center">{title}</h1>
+  <Divider class="mt-8 mb-12" />
+
+  {
+    bodyHtml ? (
+      <div class="rich text-ink leading-relaxed" set:html={bodyHtml} />
+    ) : (
+      <div class="text-center">
+        <p class="text-muted leading-relaxed">{emptyMessage}</p>
+        {email && (
+          <a href={`mailto:${email}`} class="mt-5 inline-block text-bronze hover:underline">
+            {email}
+          </a>
+        )}
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .rich :global(p) {
+    margin-bottom: 1rem;
+  }
+  .rich :global(h2),
+  .rich :global(h3) {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .rich :global(a) {
+    color: var(--color-bronze);
+    text-decoration: underline;
+  }
+  .rich :global(ul) {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+</style>

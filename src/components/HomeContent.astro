@@ -1,0 +1,93 @@
+---
+import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
+import { getSiteSettings, getFeaturedArtworks } from '../lib/queries';
+import { urlForImage } from '../lib/sanity';
+import ArtworkCard from './ArtworkCard.astro';
+import Divider from './Divider.astro';
+import StarMotif from './StarMotif.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const [settings, featured] = await Promise.all([getSiteSettings(), getFeaturedArtworks(3)]);
+
+const heroImg = settings?.heroImage?.asset
+  ? urlForImage(settings.heroImage).width(2400).height(1500).fit('crop').auto('format').url()
+  : null;
+---
+
+<!-- HERO EDITORIALE a tutto schermo (testo ancorato in basso a sinistra) -->
+<section class="relative min-h-[90vh] flex items-end overflow-hidden">
+  <!-- Sfondo: foto reale se presente, altrimenti cielo notturno -->
+  {
+    heroImg ? (
+      <img
+        src={heroImg}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    ) : (
+      <div class="night-sky absolute inset-0"></div>
+    )
+  }
+  <!-- Velatura dal basso per la leggibilità del testo -->
+  <div class="absolute inset-0 bg-gradient-to-t from-night-deep/85 via-night-deep/25 to-transparent"></div>
+
+  <!-- Contenuto -->
+  <div class="relative z-10 px-6 md:px-12 lg:px-16 pb-16 md:pb-24 max-w-3xl text-ivory">
+    <div class="flex items-center gap-3 text-gold mb-5">
+      <StarMotif class="w-4 h-4" />
+      <span class="text-[11px] uppercase tracking-[0.3em] text-gold-soft/90">{t('site.tagline')}</span>
+    </div>
+    <h1 class="font-serif text-4xl md:text-6xl leading-[1.05]">{t('home.hero.title')}</h1>
+    <a
+      href={localizePath('/collection', lang)}
+      class="mt-8 inline-flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-ivory/85 hover:text-gold transition-colors"
+    >
+      {t('home.featured.all')}
+      <span class="h-px w-10 bg-current"></span>
+    </a>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section id="manifesto" class="mx-auto max-w-3xl px-6 py-24 md:py-28 text-center scroll-mt-20">
+  <Divider class="mb-10" />
+  <p class="text-xs uppercase tracking-[0.3em] text-bronze mb-6">{t('site.tagline')}</p>
+  <h2 class="font-serif text-3xl md:text-4xl text-charcoal">{t('home.intro.title')}</h2>
+  <p class="mt-6 text-lg text-muted leading-relaxed">{t('home.intro.body')}</p>
+</section>
+
+<!-- OPERE IN EVIDENZA -->
+<section class="mx-auto max-w-6xl px-6 pb-24 md:pb-28">
+  {
+    featured.length > 0 ? (
+      <>
+        <div class="text-center mb-12">
+          <h2 class="font-serif text-2xl md:text-3xl text-charcoal">{t('home.featured')}</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+          {featured.map((a) => <ArtworkCard artwork={a} lang={lang} />)}
+        </div>
+        <div class="text-center mt-16">
+          <a
+            href={localizePath('/collection', lang)}
+            class="inline-block border border-charcoal text-charcoal px-8 py-3 text-sm uppercase tracking-wider hover:bg-charcoal hover:text-ivory transition-colors"
+          >
+            {t('home.featured.all')}
+          </a>
+        </div>
+      </>
+    ) : (
+      <div class="text-center">
+        <a
+          href={localizePath('/collection', lang)}
+          class="inline-block bg-charcoal text-ivory px-10 py-3.5 text-sm uppercase tracking-wider hover:bg-ink transition-colors"
+        >
+          {t('nav.collection')}
+        </a>
+      </div>
+    )
+  }
+</section>

@@ -1,0 +1,21 @@
+---
+// Stella di Betlemme — sparkle a quattro punte (con un secondo astro ruotato, tenue).
+// Motivo del brand: usato accanto al logo, nei divisori, sugli accenti.
+interface Props {
+  class?: string;
+}
+const { class: className = 'w-4 h-4' } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" />
+  <g transform="rotate(45 12 12)" opacity="0.35">
+    <path d="M12 4 L12.9 11.1 L20 12 L12.9 12.9 L12 20 L11.1 12.9 L4 12 L11.1 11.1 Z" />
+  </g>
+</svg>

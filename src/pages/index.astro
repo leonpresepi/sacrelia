@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeContent from '../components/HomeContent.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('home.hero.title')} description={t('home.hero.lead')} path="/" overlayHeader>
+  <HomeContent />
+</BaseLayout>

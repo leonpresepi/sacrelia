@@ -1,0 +1,63 @@
+---
+import { urlForImage } from '../lib/sanity';
+import { pickLocale, localizePath, formatDate, useTranslations, type Lang } from '../i18n/utils';
+import type { Article } from '../lib/queries';
+
+interface Props {
+  article: Article;
+  lang: Lang;
+}
+const { article, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const title = pickLocale(article.title, lang);
+const excerpt = pickLocale(article.excerpt, lang);
+const href = localizePath(`/journal/${article.slug}`, lang);
+const date = formatDate(article.publishedAt, lang);
+const catLabel = article.category
+  ? t(`journal.cat.${article.category}` as Parameters<typeof t>[0])
+  : '';
+
+const hasImage = Boolean(article.coverImage?.asset);
+const img = hasImage
+  ? urlForImage(article.coverImage).width(900).height(600).fit('crop').auto('format').url()
+  : null;
+const img2x = hasImage
+  ? urlForImage(article.coverImage).width(1800).height(1200).fit('crop').auto('format').url()
+  : null;
+---
+
+<a href={href} class="group block">
+  <div class="aspect-[3/2] overflow-hidden bg-bone">
+    {
+      img ? (
+        <img
+          src={img}
+          srcset={`${img} 900w, ${img2x} 1800w`}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          alt={title}
+          width="900"
+          height="600"
+          loading="lazy"
+          decoding="async"
+          class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center text-muted text-xs uppercase tracking-widest">
+          Sacrelia
+        </div>
+      )
+    }
+  </div>
+
+  <div class="mt-4 flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-bronze">
+    {catLabel && <span>{catLabel}</span>}
+    {catLabel && date && <span class="text-bone">·</span>}
+    {date && <span class="text-muted">{date}</span>}
+  </div>
+
+  <h3 class="mt-2 font-serif text-2xl text-charcoal leading-snug group-hover:text-bronze transition-colors">
+    {title}
+  </h3>
+  {excerpt && <p class="mt-2 text-sm text-muted leading-relaxed line-clamp-2">{excerpt}</p>}
+</a>

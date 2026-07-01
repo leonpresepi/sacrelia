@@ -1,0 +1,21 @@
+---
+import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const year = 2026;
+---
+
+<footer class="border-t border-bone mt-24">
+  <div class="mx-auto max-w-6xl px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-muted">
+    <div class="font-serif text-xl text-charcoal">Sacrelia</div>
+    <nav class="flex flex-wrap items-center justify-center gap-6 uppercase tracking-wider text-xs">
+      <a href={localizePath('/collection', lang)} class="hover:text-bronze transition-colors">{t('nav.collection')}</a>
+      <a href={localizePath('/journal', lang)} class="hover:text-bronze transition-colors">{t('nav.journal')}</a>
+      <a href={localizePath('/hospitality', lang)} class="hover:text-bronze transition-colors">{t('nav.hospitality')}</a>
+      <a href={localizePath('/contact', lang)} class="hover:text-bronze transition-colors">{t('nav.contact')}</a>
+      <a href={localizePath('/privacy', lang)} class="hover:text-bronze transition-colors">{t('legal.privacy')}</a>
+    </nav>
+    <p class="text-xs">© {year} Sacrelia. {t('footer.rights')}</p>
+  </div>
+</footer>

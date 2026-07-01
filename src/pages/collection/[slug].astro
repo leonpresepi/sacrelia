@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArtworkView from '../../components/ArtworkView.astro';
+import { getArtworkSlugs, getArtwork } from '../../lib/queries';
+import { getLangFromUrl, useTranslations, pickLocale } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  const slugs = await getArtworkSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const artwork = await getArtwork(slug!);
+if (!artwork) throw new Error(`Opera non trovata: ${slug}`);
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const title = pickLocale(artwork.title, lang);
+const description = pickLocale(artwork.shortDescription, lang) || t('collection.intro');
+---
+
+<BaseLayout title={title} description={description} path={`/collection/${slug}`}>
+  <ArtworkView artwork={artwork} lang={lang} />
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageView from '../../components/PageView.astro';
+import { getPage } from '../../lib/queries';
+import { getLangFromUrl, useTranslations, pickLocale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'it' } }, { params: { lang: 'de' } }, { params: { lang: 'fr' } }, { params: { lang: 'es' } }];
+}
+
+const slug = 'atelier';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const page = await getPage(slug);
+
+const title = (page && pickLocale(page.title, lang)) || t('nav.atelier');
+const description = (page && pickLocale(page.seoDescription, lang)) || t('site.tagline');
+---
+
+<BaseLayout title={title} description={description} path={`/${slug}`} overlayHeader>
+  <PageView page={page} defaultTitle={t('nav.atelier')} />
+</BaseLayout>

@@ -1,0 +1,139 @@
+---
+import { toHTML } from '@portabletext/to-html';
+import { urlForImage } from '../lib/sanity';
+import {
+  pickLocale,
+  pickLocaleBlocks,
+  useTranslations,
+  localizePath,
+  type Lang,
+} from '../i18n/utils';
+import type { Artwork } from '../lib/queries';
+import StarMotif from './StarMotif.astro';
+
+interface Props {
+  artwork: Artwork;
+  lang: Lang;
+}
+const { artwork, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const title = pickLocale(artwork.title, lang);
+const short = pickLocale(artwork.shortDescription, lang);
+const materials = pickLocale(artwork.materials, lang);
+const blocks = pickLocaleBlocks(artwork.description, lang);
+const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+
+function img(source: unknown, w: number) {
+  return urlForImage(source).width(w).auto('format').url();
+}
+
+const mainSrc = artwork.mainImage?.asset ? img(artwork.mainImage, 1400) : null;
+const gallery = (artwork.gallery ?? [])
+  .filter((g) => g?.asset)
+  .map((g) => ({ src: img(g, 1400), thumb: img(g, 600) }));
+
+const details = [
+  materials ? { label: t('artwork.materials'), value: materials } : null,
+  artwork.dimensions ? { label: t('artwork.dimensions'), value: artwork.dimensions } : null,
+  artwork.year ? { label: t('artwork.year'), value: String(artwork.year) } : null,
+].filter(Boolean) as { label: string; value: string }[];
+
+// Dati strutturati per la SEO (prodotto senza prezzo: vetrina su richiesta).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: title,
+  description: short || undefined,
+  image: [mainSrc, ...gallery.map((g) => g.src)].filter(Boolean),
+  brand: { '@type': 'Brand', name: 'Sacrelia' },
+  ...(materials ? { material: materials } : {}),
+};
+---
+
+<article class="mx-auto max-w-6xl px-6 py-12 md:py-16">
+  <a
+    href={localizePath('/collection', lang)}
+    class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-muted hover:text-bronze transition-colors"
+  >
+    ← {t('artwork.back')}
+  </a>
+
+  <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+    <!-- Galleria -->
+    <div class="space-y-4">
+      {
+        mainSrc ? (
+          <img
+            src={mainSrc}
+            alt={title}
+            loading="eager"
+            decoding="async"
+            class="w-full bg-bone object-cover"
+          />
+        ) : (
+          <div class="aspect-[4/5] w-full bg-bone" />
+        )
+      }
+      {
+        gallery.length > 0 && (
+          <div class="grid grid-cols-3 gap-4">
+            {gallery.map((g) => (
+              <img src={g.thumb} alt={title} loading="lazy" decoding="async" class="w-full aspect-square object-cover bg-bone" />
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Informazioni -->
+    <div class="lg:pt-6">
+      <div class="flex items-center gap-3 text-bronze">
+        <StarMotif class="w-3.5 h-3.5" />
+        <span class="text-xs uppercase tracking-[0.3em]">{t('site.tagline')}</span>
+      </div>
+
+      <h1 class="mt-4 font-serif text-4xl md:text-5xl text-charcoal leading-tight">{title}</h1>
+
+      {short && <p class="mt-6 text-lg text-muted leading-relaxed">{short}</p>}
+
+      {bodyHtml && (
+        <div class="rich mt-6 text-ink leading-relaxed" set:html={bodyHtml} />
+      )}
+
+      {
+        details.length > 0 && (
+          <dl class="mt-10 border-t border-bone divide-y divide-bone">
+            {details.map((d) => (
+              <div class="flex justify-between py-3 text-sm">
+                <dt class="uppercase tracking-wider text-muted">{d.label}</dt>
+                <dd class="text-ink text-right">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      <p class="mt-10 text-sm text-muted italic">{t('artwork.enquire')}</p>
+      <a
+        href={`${localizePath('/contact', lang)}?opera=${encodeURIComponent(title)}`}
+        class="mt-4 inline-block bg-charcoal text-ivory px-8 py-3 text-sm uppercase tracking-wider hover:bg-ink transition-colors"
+      >
+        {t('cta.request')}
+      </a>
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</article>
+
+<style>
+  .rich :global(p) {
+    margin-bottom: 1rem;
+  }
+  .rich :global(h2),
+  .rich :global(h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+</style>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalView from '../components/LegalView.astro';
+import { getPage } from '../lib/queries';
+import { getLangFromUrl, useTranslations, pickLocale } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const page = await getPage('privacy');
+
+const title = (page && pickLocale(page.title, lang)) || t('legal.privacy.title');
+const description = (page && pickLocale(page.seoDescription, lang)) || t('legal.privacy.title');
+---
+
+<BaseLayout title={title} description={description} path="/privacy">
+  <LegalView page={page} defaultTitle={t('legal.privacy.title')} emptyMessage={t('legal.privacy.empty')} />
+</BaseLayout>

@@ -1,0 +1,293 @@
+---
+import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
+import { languages } from '../i18n/ui';
+import StarMotif from './StarMotif.astro';
+
+interface Props {
+  /** True sulle pagine con hero scuro: header trasparente, che diventa solido allo scroll. */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const nav = [
+  { key: 'nav.collection', path: '/collection' },
+  { key: 'nav.craftsmanship', path: '/craftsmanship' },
+  { key: 'nav.atelier', path: '/atelier' },
+  { key: 'nav.journal', path: '/journal' },
+  { key: 'nav.hospitality', path: '/hospitality' },
+  { key: 'nav.contact', path: '/contact' },
+] as const;
+
+// Path "neutro" (senza prefisso lingua) per selettore lingua e voce attiva.
+let neutral = Astro.url.pathname;
+if (lang !== 'en') neutral = neutral.replace(new RegExp(`^/${lang}`), '') || '/';
+const isActive = (path: string) => neutral === path || neutral.startsWith(path + '/');
+
+const langKeys = Object.keys(languages) as Array<keyof typeof languages>;
+const positionClass = overlay ? 'fixed' : 'sticky';
+const initialTheme = overlay ? 'theme-light' : 'theme-dark';
+---
+
+<header
+  id="site-header"
+  data-overlay={overlay ? 'true' : 'false'}
+  class={`site-header ${positionClass} top-0 inset-x-0 z-50 ${initialTheme}`}
+>
+  <div class="bar mx-auto max-w-6xl px-6 flex items-center justify-between gap-8">
+    <a href={localizePath('/', lang)} class="flex items-center gap-2 shrink-0">
+      <StarMotif class="accent w-4 h-4" />
+      <span class="wordmark font-serif text-2xl tracking-wide">Sacrelia</span>
+    </a>
+
+    <!-- Navigazione desktop -->
+    <nav class="hidden md:flex items-center gap-7 text-sm uppercase tracking-wider">
+      {
+        nav.map((item) => (
+          <a
+            href={localizePath(item.path, lang)}
+            class:list={['nav-link', { active: isActive(item.path) }]}
+          >
+            {t(item.key)}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-5">
+      <!-- Selettore lingua desktop -->
+      <div class="hidden md:flex items-center gap-2 text-xs uppercase tracking-wider">
+        {
+          langKeys.map((l, i) => (
+            <>
+              {i > 0 && <span class="sep">/</span>}
+              <a
+                href={localizePath(neutral, l)}
+                class:list={['lang-link', { active: l === lang }]}
+                aria-current={l === lang ? 'true' : undefined}
+              >
+                {l}
+              </a>
+            </>
+          ))
+        }
+      </div>
+
+      <!-- Hamburger (mobile) -->
+      <button
+        id="menu-toggle"
+        class="md:hidden flex items-center justify-center w-9 h-9 -mr-2"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menu mobile a tutto schermo -->
+<div
+  id="mobile-menu"
+  class="mobile-menu md:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu"
+  hidden
+>
+  <div class="flex justify-between items-center px-6 h-[76px]">
+    <span class="font-serif text-2xl text-charcoal">Sacrelia</span>
+    <button id="menu-close" class="flex items-center justify-center w-9 h-9 -mr-2 text-charcoal" aria-label="Close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+
+  <nav class="flex-1 flex flex-col items-center justify-center gap-8">
+    {
+      nav.map((item) => (
+        <a
+          href={localizePath(item.path, lang)}
+          class:list={['m-link font-serif text-3xl text-charcoal', { active: isActive(item.path) }]}
+        >
+          {t(item.key)}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="pb-14 flex justify-center gap-3 text-sm uppercase tracking-widest text-muted">
+    {
+      langKeys.map((l, i) => (
+        <>
+          {i > 0 && <span class="text-bone">/</span>}
+          <a
+            href={localizePath(neutral, l)}
+            class:list={['m-lang', { active: l === lang }]}
+            aria-current={l === lang ? 'true' : undefined}
+          >
+            {l}
+          </a>
+        </>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .site-header {
+    transition: background-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+  }
+  .bar {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    transition: padding 0.35s ease;
+  }
+  .site-header.is-compact .bar {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  /* Tema chiaro: trasparente sopra l'hero scuro */
+  .site-header.theme-light {
+    color: var(--color-ivory);
+    background: linear-gradient(to bottom, rgba(10, 12, 20, 0.45), transparent);
+  }
+  .site-header.theme-light .accent {
+    color: var(--color-gold);
+  }
+
+  /* Tema scuro: solido (avorio, vetro smerigliato) */
+  .site-header.theme-dark {
+    color: var(--color-charcoal);
+    background: rgba(250, 248, 244, 0.9);
+    box-shadow: 0 1px 0 rgba(28, 26, 23, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .site-header.theme-dark .accent {
+    color: var(--color-bronze);
+  }
+
+  .wordmark {
+    color: inherit;
+  }
+
+  /* Link di navigazione */
+  .nav-link,
+  .lang-link {
+    color: inherit;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .nav-link:hover,
+  .lang-link:hover,
+  .nav-link.active,
+  .lang-link.active {
+    opacity: 1;
+  }
+  .theme-light .nav-link:hover,
+  .theme-light .nav-link.active,
+  .theme-light .lang-link:hover,
+  .theme-light .lang-link.active {
+    color: var(--color-gold);
+  }
+  .theme-dark .nav-link:hover,
+  .theme-dark .nav-link.active,
+  .theme-dark .lang-link:hover,
+  .theme-dark .lang-link.active {
+    color: var(--color-bronze);
+  }
+  .sep {
+    opacity: 0.4;
+  }
+
+  /* Menu mobile */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-ivory);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu.open {
+    opacity: 1;
+  }
+  /* Ripristina display:none quando chiuso (l'attributo hidden verrebbe sovrascritto da display:flex) */
+  .mobile-menu[hidden] {
+    display: none;
+  }
+  .m-link {
+    transition: color 0.2s ease;
+  }
+  .m-link.active,
+  .m-link:hover {
+    color: var(--color-bronze);
+  }
+  .m-lang.active {
+    color: var(--color-bronze);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header,
+    .bar,
+    .mobile-menu {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // --- Header: trasparente → solido + compatto allo scroll ---
+  const header = document.getElementById('site-header');
+  if (header) {
+    const isOverlay = header.dataset.overlay === 'true';
+    const onScroll = () => {
+      const scrolled = window.scrollY > 24;
+      header.classList.toggle('is-compact', scrolled);
+      if (isOverlay) {
+        header.classList.toggle('theme-dark', scrolled);
+        header.classList.toggle('theme-light', !scrolled);
+      }
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // --- Menu mobile ---
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const closeBtn = document.getElementById('menu-close');
+
+  if (toggle && menu && closeBtn) {
+    const open = () => {
+      menu.hidden = false;
+      requestAnimationFrame(() => menu.classList.add('open'));
+      document.documentElement.style.overflow = 'hidden';
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      menu.classList.remove('open');
+      document.documentElement.style.overflow = '';
+      toggle.setAttribute('aria-expanded', 'false');
+      window.setTimeout(() => {
+        menu.hidden = true;
+      }, 300);
+    };
+    toggle.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) close();
+    });
+  }
+</script>

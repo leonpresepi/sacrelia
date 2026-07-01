@@ -1,0 +1,17 @@
+---
+import StarMotif from './StarMotif.astro';
+interface Props {
+  class?: string;
+  /** Colore "chiaro" per sfondi scuri (notte). */
+  light?: boolean;
+}
+const { class: className = '', light = false } = Astro.props;
+const line = light ? 'bg-gold/40' : 'bg-bronze/40';
+const star = light ? 'text-gold' : 'text-bronze';
+---
+
+<div class={`flex items-center justify-center gap-4 ${className}`}>
+  <span class={`h-px w-16 ${line}`}></span>
+  <StarMotif class={`w-3 h-3 ${star}`} />
+  <span class={`h-px w-16 ${line}`}></span>
+</div>

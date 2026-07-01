@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CollectionView from '../../../components/CollectionView.astro';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'it' } }, { params: { lang: 'de' } }, { params: { lang: 'fr' } }, { params: { lang: 'es' } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('collection.title')} description={t('collection.intro')} path="/collection" overlayHeader>
+  <CollectionView />
+</BaseLayout>

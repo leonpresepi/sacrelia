@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleView from '../../components/ArticleView.astro';
+import { getArticleSlugs, getArticle } from '../../lib/queries';
+import { getLangFromUrl, useTranslations, pickLocale } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  const slugs = await getArticleSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const article = await getArticle(slug!);
+if (!article) throw new Error(`Articolo non trovato: ${slug}`);
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const title = pickLocale(article.title, lang);
+const description =
+  pickLocale(article.seoDescription, lang) || pickLocale(article.excerpt, lang) || t('journal.intro');
+---
+
+<BaseLayout title={title} description={description} path={`/journal/${slug}`}>
+  <ArticleView article={article} lang={lang} />
+</BaseLayout>

@@ -1,0 +1,43 @@
+---
+import { getArtworks } from '../lib/queries';
+import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
+import ArtworkCard from './ArtworkCard.astro';
+import Divider from './Divider.astro';
+import Comet from './Comet.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const artworks = await getArtworks();
+---
+
+<!-- Apertura: cielo notturno della Natività con la cometa -->
+<section class="night-sky">
+  <div class="mx-auto max-w-6xl px-6 py-24 md:py-32 text-center">
+    <Comet class="w-16 h-16 md:w-20 md:h-20 text-gold mx-auto mb-8" />
+    <h1 class="font-serif text-4xl md:text-5xl text-ivory">{t('collection.title')}</h1>
+    <p class="mt-5 max-w-xl mx-auto text-gold-soft/80 leading-relaxed">
+      {t('collection.intro')}
+    </p>
+  </div>
+</section>
+
+<section class="mx-auto max-w-6xl px-6 py-20 md:py-24">
+  {
+    artworks.length === 0 ? (
+      <div class="text-center py-12">
+        <Divider class="mb-10" />
+        <p class="text-muted max-w-md mx-auto leading-relaxed">{t('collection.empty')}</p>
+        <a
+          href={localizePath('/contact', lang)}
+          class="mt-8 inline-block border border-charcoal text-charcoal px-8 py-3 text-sm uppercase tracking-wider hover:bg-charcoal hover:text-ivory transition-colors"
+        >
+          {t('cta.request')}
+        </a>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+        {artworks.map((a) => <ArtworkCard artwork={a} lang={lang} />)}
+      </div>
+    )
+  }
+</section>

@@ -1,0 +1,149 @@
+---
+import { toHTML } from '@portabletext/to-html';
+import { urlForImage } from '../lib/sanity';
+import {
+  pickLocale,
+  pickLocaleBlocks,
+  useTranslations,
+  localizePath,
+  formatDate,
+  type Lang,
+} from '../i18n/utils';
+import type { Article } from '../lib/queries';
+import ArtworkCard from './ArtworkCard.astro';
+import StarMotif from './StarMotif.astro';
+import Divider from './Divider.astro';
+
+interface Props {
+  article: Article;
+  lang: Lang;
+}
+const { article, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const title = pickLocale(article.title, lang);
+const excerpt = pickLocale(article.excerpt, lang);
+const blocks = pickLocaleBlocks(article.body, lang);
+const bodyHtml = blocks.length ? toHTML(blocks as never) : '';
+const date = formatDate(article.publishedAt, lang);
+const catLabel = article.category
+  ? t(`journal.cat.${article.category}` as Parameters<typeof t>[0])
+  : '';
+
+const coverSrc = article.coverImage?.asset
+  ? urlForImage(article.coverImage).width(1600).height(900).fit('crop').auto('format').url()
+  : null;
+
+const related = (article.relatedArtworks ?? []).filter((a) => a?.slug);
+
+// Dati strutturati per la SEO (articolo editoriale).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: excerpt || undefined,
+  image: coverSrc ? [coverSrc] : undefined,
+  datePublished: article.publishedAt || undefined,
+  author: { '@type': 'Organization', name: 'Sacrelia' },
+  publisher: { '@type': 'Organization', name: 'Sacrelia' },
+  inLanguage: lang,
+};
+---
+
+<article class="mx-auto max-w-3xl px-6 py-12 md:py-16">
+  <a
+    href={localizePath('/journal', lang)}
+    class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-muted hover:text-bronze transition-colors"
+  >
+    ← {t('journal.back')}
+  </a>
+
+  <header class="mt-10 text-center">
+    <div class="flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.25em] text-bronze">
+      {catLabel && <span>{catLabel}</span>}
+      {catLabel && date && <span class="text-bone">·</span>}
+      {date && <span class="text-muted">{date}</span>}
+    </div>
+    <h1 class="mt-5 font-serif text-4xl md:text-5xl text-charcoal leading-tight">{title}</h1>
+    {excerpt && <p class="mt-6 text-lg md:text-xl text-muted leading-relaxed">{excerpt}</p>}
+  </header>
+</article>
+
+{
+  coverSrc && (
+    <figure class="mx-auto max-w-5xl px-6">
+      <img
+        src={coverSrc}
+        alt={title}
+        width="1600"
+        height="900"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        class="w-full bg-bone object-cover"
+      />
+    </figure>
+  )
+}
+
+<div class="mx-auto max-w-3xl px-6">
+  {
+    bodyHtml && (
+      <div class="rich mt-12 md:mt-16 text-ink leading-relaxed" set:html={bodyHtml} />
+    )
+  }
+
+  {
+    related.length > 0 && (
+      <section class="mt-20">
+        <div class="flex items-center gap-3 text-bronze">
+          <StarMotif class="w-3.5 h-3.5" />
+          <span class="text-xs uppercase tracking-[0.3em]">{t('journal.related')}</span>
+        </div>
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12">
+          {related.map((a) => (
+            <ArtworkCard artwork={a as never} lang={lang} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <div class="mt-20 text-center">
+    <Divider class="mb-10" />
+    <a
+      href={localizePath('/contact', lang)}
+      class="inline-block bg-charcoal text-ivory px-8 py-3 text-sm uppercase tracking-wider hover:bg-ink transition-colors"
+    >
+      {t('cta.request')}
+    </a>
+  </div>
+</div>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+<style>
+  .rich :global(p) {
+    margin-bottom: 1.15rem;
+  }
+  .rich :global(h2),
+  .rich :global(h3) {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    margin-top: 2.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-charcoal);
+  }
+  .rich :global(blockquote) {
+    border-left: 2px solid var(--color-bronze);
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--color-muted);
+    margin: 1.75rem 0;
+  }
+  .rich :global(a) {
+    color: var(--color-bronze);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

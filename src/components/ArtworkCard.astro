@@ -1,0 +1,51 @@
+---
+import { urlForImage } from '../lib/sanity';
+import { pickLocale, localizePath, type Lang } from '../i18n/utils';
+import type { Artwork } from '../lib/queries';
+
+interface Props {
+  artwork: Artwork;
+  lang: Lang;
+}
+const { artwork, lang } = Astro.props;
+
+const title = pickLocale(artwork.title, lang);
+const short = pickLocale(artwork.shortDescription, lang);
+const href = localizePath(`/collection/${artwork.slug}`, lang);
+
+const hasImage = Boolean(artwork.mainImage?.asset);
+const img = hasImage
+  ? urlForImage(artwork.mainImage).width(800).height(1000).fit('crop').auto('format').url()
+  : null;
+const img2x = hasImage
+  ? urlForImage(artwork.mainImage).width(1600).height(2000).fit('crop').auto('format').url()
+  : null;
+---
+
+<a href={href} class="group block">
+  <div class="aspect-[4/5] overflow-hidden bg-bone">
+    {
+      img ? (
+        <img
+          src={img}
+          srcset={`${img} 800w, ${img2x} 1600w`}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          alt={title}
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+          class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center text-muted text-xs uppercase tracking-widest">
+          Sacrelia
+        </div>
+      )
+    }
+  </div>
+  <h3 class="mt-4 font-serif text-xl text-charcoal group-hover:text-bronze transition-colors">
+    {title}
+  </h3>
+  {short && <p class="mt-1 text-sm text-muted line-clamp-2">{short}</p>}
+</a>

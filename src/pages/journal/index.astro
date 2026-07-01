@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import JournalView from '../../components/JournalView.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('journal.title')} description={t('journal.intro')} path="/journal" overlayHeader>
+  <JournalView />
+</BaseLayout>

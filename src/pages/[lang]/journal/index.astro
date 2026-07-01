@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import JournalView from '../../../components/JournalView.astro';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'it' } }, { params: { lang: 'de' } }, { params: { lang: 'fr' } }, { params: { lang: 'es' } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('journal.title')} description={t('journal.intro')} path="/journal" overlayHeader>
+  <JournalView />
+</BaseLayout>
