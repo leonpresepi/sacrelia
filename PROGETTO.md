@@ -296,13 +296,28 @@ Avviato il setup dell'auto-deploy Git → Cloudflare Pages (vedi piano sez. 10).
 - **Come rilanciare un deploy:** basta un **push su `main`** (Cloudflare ribuilda in automatico) —
   non serve cercare "Retry" nel dashboard.
 - **Scelta utente:** **nessun `noindex`** su `sacrelia.pages.dev` (anteprima resta indicizzabile).
-- **Da completare:**
-  1. verificare che la build torni **Success** con le 4 variabili;
-  2. **Passo 3 — webhook Sanity → Cloudflare Deploy Hook** (guidato dal pannello sanity.io/manage):
-     Publish in Sanity ⇒ rebuild automatico del sito;
-  3. aggiungere `PUBLIC_WEB3FORMS_KEY` quando disponibile;
-  4. **revocare i vecchi token** Cloudflare/Sanity passati in chat nelle sessioni precedenti;
-  5. collegare il dominio **`sacrelia.com`** quando acquistato.
+- **Build Success (FATTO):** dopo il fix Node, la build torna Success con le 4 variabili;
+  sito live e contenuti Sanity caricati (verificato HTTP 200).
+- **Passo 3 — WEBHOOK SANITY (FATTO e COLLAUDATO 2026-07-01):** auto-deploy sui contenuti attivo.
+  - Su Cloudflare (progetto Worker `sacrelia`) → **Settings → Deploy Hooks** creato hook
+    **`sanity-publish`** su branch `main` (genera un URL `.../workers/builds/deploy_hooks/<id>` —
+    **segreto**, NON salvato qui; rigenerabile dal dashboard).
+  - Su **sanity.io/manage** (progetto `nvhc1tge`) → **API → Webhooks** creato webhook
+    **"Cloudflare rebuild"**: URL = deploy hook, dataset `production`, trigger Create/Update/Delete,
+    method POST, **Filter** = `!(_id in path('drafts.**')) && _type in ['artwork','page','article','siteSettings']`
+    (parte solo su Publish di documenti reali, non sulle bozze), Projection vuota.
+  - **Collaudo OK:** Publish in Studio ⇒ nuovo build "Deploy Hook" su Cloudflare ⇒ sito aggiornato.
+- **Flusso finale (utente autonomo):** push su GitHub ⇒ sito ribuildato; Publish in Sanity ⇒ sito
+  ribuildato. Nessun intervento manuale/assistente necessario per aggiornare.
+
+**Ripresa prossima sessione — TODO aperti:**
+  1. `PUBLIC_WEB3FORMS_KEY` → aggiungere su Cloudflare quando l'utente avrà la chiave (attiva il form);
+  2. 🔐 **revocare i vecchi token** Cloudflare/Sanity passati in chat nelle sessioni precedenti
+     (il deploy Studio di oggi è avvenuto con `sanity login`, senza token nuovi — CLI ora loggato);
+  3. **collegare il dominio `sacrelia.com`** su Cloudflare quando acquistato (~5 min: aggiungere
+     Custom domain al Worker + record DNS);
+  4. contenuti reali: foto professionali alta risoluzione, `siteSettings`, testi pagine, testo legale privacy;
+  5. (facoltativo) primo articolo del Journal con foto inline per collaudare la formattazione.
 
 ---
 
@@ -388,5 +403,6 @@ corsivo/titoli/elenchi/link/citazioni già disponibili di default:
   usato da ArticleView/ArtworkView/PageView/LegalView. Stile `.rich figure/img/figcaption` in `global.css`.
 - **Nota d'uso:** i corpi sono localizzati **campo-per-campo**, quindi la foto va inserita nella lingua
   in cui scrivi (per averla in tutte le 5 lingue, si inserisce in ciascun corpo).
-- ⚠️ **Richiede `sanity deploy`** dello Studio per far comparire il pulsante immagine nell'editor
-  (il login browser del CLI dava errori → usare token: `SANITY_AUTH_TOKEN`, oppure `sanity login`).
+- **Studio ripubblicato (FATTO 2026-07-01):** `sanity deploy` eseguito dopo `sanity login` (browser,
+  login E-mail/GitHub — NON Google che dà errore) → pulsante **Image** ora attivo nell'editor su
+  https://sacrelia.sanity.studio/. Sito già in grado di renderizzare le foto inline (push su GitHub).
