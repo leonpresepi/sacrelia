@@ -406,3 +406,24 @@ corsivo/titoli/elenchi/link/citazioni già disponibili di default:
 - **Studio ripubblicato (FATTO 2026-07-01):** `sanity deploy` eseguito dopo `sanity login` (browser,
   login E-mail/GitHub — NON Google che dà errore) → pulsante **Image** ora attivo nell'editor su
   https://sacrelia.sanity.studio/. Sito già in grado di renderizzare le foto inline (push su GitHub).
+
+## 12. Logo / identità visiva (proposte + scelta 2026-07-02)
+
+Prodotte **3 proposte di logo** coerenti con l'identità già decisa (Stella di Betlemme a 4 punte,
+oro `#CBAC6A`/bronzo `#A9885F` su avorio, serif Cormorant Garamond): **I La Stella** (lockup verticale),
+**II La Cometa** (orizzontale), **III Il Sigillo** (monogramma S+stella). Mostrate in una brand board.
+- **DECISIONE UTENTE:** **II Cometa** come logo header + **III Sigillo/stella** come favicon.
+- **Implementato (FATTO, build OK):**
+  - nuovo componente **`src/components/Logo.astro`** (cometa con scia + wordmark "Sacrelia"; la
+    cometa usa `currentColor` via prop `markClass`, scia con `non-scaling-stroke` per restare nitida
+    a dimensioni piccole);
+  - **`Header.astro`** aggiornato: brand desktop `<Logo markClass="accent" />` (oro su hero scuro,
+    bronzo su header solido, come prima); brand del menu mobile `<Logo markClass="text-bronze" .../>`.
+    Rimosso il vecchio `StarMotif`+testo dal brand (StarMotif resta usato altrove);
+  - **`public/favicon.svg`** rifatta: stella oro su quadrato carbone arrotondato (leggibile a 16px;
+    la "S+cerchio" del Sigillo non regge a quelle dimensioni → si usa la stella, cuore del sigillo).
+- **Nota:** il monogramma lettera "S" va usato solo in-pagina (dove il font è caricato), non come
+  file SVG isolato (i social rasterizzano senza web-font → la S userebbe un ripiego). Per l'avatar
+  social conviene esportare un PNG dal monogramma renderizzato.
+- **Da valutare (utente):** rifinitura da graphic designer + registrazione del marchio (vedi sez. 7);
+  eventuale `apple-touch-icon.png` per iOS (la favicon SVG copre i browser moderni).

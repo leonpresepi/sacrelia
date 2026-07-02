@@ -1,7 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, localizePath } from '../i18n/utils';
 import { languages } from '../i18n/ui';
-import StarMotif from './StarMotif.astro';
+import Logo from './Logo.astro';
 
 interface Props {
   /** True sulle pagine con hero scuro: header trasparente, che diventa solido allo scroll. */
@@ -37,9 +37,8 @@ const initialTheme = overlay ? 'theme-light' : 'theme-dark';
   class={`site-header ${positionClass} top-0 inset-x-0 z-50 ${initialTheme}`}
 >
   <div class="bar mx-auto max-w-6xl px-6 flex items-center justify-between gap-8">
-    <a href={localizePath('/', lang)} class="flex items-center gap-2 shrink-0">
-      <StarMotif class="accent w-4 h-4" />
-      <span class="wordmark font-serif text-2xl tracking-wide">Sacrelia</span>
+    <a href={localizePath('/', lang)} class="flex items-center shrink-0" aria-label="Sacrelia — home">
+      <Logo markClass="accent" />
     </a>
 
     <!-- Navigazione desktop -->
@@ -101,7 +100,7 @@ const initialTheme = overlay ? 'theme-light' : 'theme-dark';
   hidden
 >
   <div class="flex justify-between items-center px-6 h-[76px]">
-    <span class="font-serif text-2xl text-charcoal">Sacrelia</span>
+    <Logo markClass="text-bronze" wordmarkClass="text-charcoal" />
     <button id="menu-close" class="flex items-center justify-center w-9 h-9 -mr-2 text-charcoal" aria-label="Close">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />

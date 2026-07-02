@@ -1,0 +1,37 @@
+---
+// Logo Sacrelia — lockup "Cometa": Cometa di Betlemme con scia + wordmark serif.
+// La cometa usa currentColor (colore passato via `markClass`); il nome eredita il
+// colore del contenitore. Le linee della scia usano non-scaling-stroke per restare
+// nitide a qualsiasi dimensione (header piccolo compreso).
+interface Props {
+  /** Classe/colore per la cometa (es. "accent" nell'header, "text-bronze" su fondo chiaro). */
+  markClass?: string;
+  /** Classe/colore per il wordmark (default: eredita dal contenitore). */
+  wordmarkClass?: string;
+  /** Dimensione tipografica del wordmark (utility Tailwind). */
+  size?: string;
+}
+const { markClass = '', wordmarkClass = '', size = 'text-2xl' } = Astro.props;
+---
+
+<span class="inline-flex items-center gap-2.5 shrink-0">
+  <svg
+    class={`comet w-8 h-8 ${markClass}`}
+    viewBox="0 0 120 120"
+    fill="none"
+    stroke="currentColor"
+    stroke-linecap="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M14 100 L74 40" stroke-width="1.6" vector-effect="non-scaling-stroke" opacity="0.95" />
+    <path d="M30 104 L82 52" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.5" />
+    <path d="M10 84 L64 30" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.5" />
+    <path
+      fill="currentColor"
+      stroke="none"
+      d="M88 18 L91.5 32.5 L106 36 L91.5 39.5 L88 54 L84.5 39.5 L70 36 L84.5 32.5 Z"
+    />
+  </svg>
+  <span class={`font-serif tracking-wide leading-none ${size} ${wordmarkClass}`}>Sacrelia</span>
+</span>
