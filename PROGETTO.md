@@ -314,8 +314,7 @@ Avviato il setup dell'auto-deploy Git → Cloudflare Pages (vedi piano sez. 10).
   1. `PUBLIC_WEB3FORMS_KEY` → aggiungere su Cloudflare quando l'utente avrà la chiave (attiva il form);
   2. 🔐 **revocare i vecchi token** Cloudflare/Sanity passati in chat nelle sessioni precedenti
      (il deploy Studio di oggi è avvenuto con `sanity login`, senza token nuovi — CLI ora loggato);
-  3. **collegare il dominio `sacrelia.com`** su Cloudflare quando acquistato (~5 min: aggiungere
-     Custom domain al Worker + record DNS);
+  3. ~~collegare il dominio `sacrelia.com`~~ **FATTO 2026-07-02** → vedi sezione 13;
   4. contenuti reali: foto professionali alta risoluzione, `siteSettings`, testi pagine, testo legale privacy;
   5. (facoltativo) primo articolo del Journal con foto inline per collaudare la formattazione.
 
@@ -427,3 +426,23 @@ oro `#CBAC6A`/bronzo `#A9885F` su avorio, serif Cormorant Garamond): **I La Stel
   social conviene esportare un PNG dal monogramma renderizzato.
 - **Da valutare (utente):** rifinitura da graphic designer + registrazione del marchio (vedi sez. 7);
   eventuale `apple-touch-icon.png` per iOS (la favicon SVG copre i browser moderni).
+
+## 13. Dominio sacrelia.com — COLLEGATO E ONLINE (2026-07-02)
+
+- **Dominio registrato su Cloudflare Registrar** (a prezzo di costo, ~€10/anno). Nameserver Cloudflare
+  automatici: `keaton.ns.cloudflare.com` + `sydney.ns.cloudflare.com`.
+- **Nota:** la registrazione ci ha messo **~2-3 ore** a comparire nel registro .com (più lenta del
+  solito → nel frattempo la pagina di stato mostrava "invalid nameserver", che è **transitorio**:
+  non toccare i nameserver, si sistema da solo quando il registro pubblica il dominio).
+- **Attenzione grafia:** il brand è **sacrelia** (con la E). `sacralia.com` (con la A) è un dominio
+  di terzi, già registrato (IONOS) — non è nostro.
+- **Custom domain aggiunto al Worker `sacrelia`** → `https://sacrelia.com` **HTTP 200**, certificato
+  SSL valido (Google Trust Services, auto-emesso da Cloudflare in ~9 min), canonical già = apex.
+- **Da fare (utente, non bloccante):**
+  1. **`www.sacrelia.com`**: non attivo. Se lo si vuole, aggiungere come custom domain + redirect
+     www → apex (l'apex resta canonico).
+  2. **"Always Use HTTPS"** su Cloudflare (SSL/TLS → Edge Certificates): al momento `http://` risponde
+     200 senza redirect forzato a https → attivarlo per SEO/sicurezza.
+  3. 🔐 **revocare i vecchi token** Cloudflare/Sanity (vedi 10-bis).
+  4. Valutare `noindex` sull'anteprima `*.workers.dev` (ora che l'apex è live, per evitare duplicati;
+     i canonical puntano già a sacrelia.com, quindi rischio basso).
