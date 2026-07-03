@@ -486,3 +486,20 @@ grosso che manca sono i **contenuti reali** — vedi lista sotto):
 - **Contenuti reali** (foto HD, `siteSettings`, testi pagine, **testo legale privacy/cookie**), form
   Web3Forms attivo, **storia d'origine del brand** (heritage), primo articolo Journal.
 - Email professionale (Google Workspace) — setup in corso.
+
+## 15. Storia d'origine / heritage (DEFINITA + PUBBLICATA 2026-07-03)
+
+Risolve il punto aperto (sez. 6-bis: "definire la storia d'origine"). Fonte: racconto reale
+dell'utente sulla **Leonpresepi** — riscritto in chiave d'autore/sobria (regole tono sez. 6-bis:
+mai "lusso", prestigio percepito).
+- **Fatti canonici (heritage):** nasce nel **1992** da tre amici **Gaetano, Gianni, Maurizio**;
+  Gianni socio **Associazione Italiana Amici del Presepe**; svolta al primo congresso nazionale a
+  **Nicotera**; tradizione del **presepe napoletano**; dedizione mai spenta tra studi/lavoro.
+- **Scelte editoriali:** tolta la parte "internet/forum/lezioni virtuali" (stonava col prodotto
+  d'autore); enfatizzata la tradizione napoletana; mantenuti i nomi dei fondatori (autenticità/E-E-A-T).
+- **Pubblicata** nella pagina **Atelier** (`/atelier`): documento Sanity `page` `_id=page-atelier`
+  (slug `atelier`), campi title/lead/body/seoDescription in **EN (default) + IT**; DE/FR/ES in
+  fallback EN finché non tradotte. Creato via `sanity documents create --replace` (CLI loggato).
+  Editabile dallo Studio (Pagina "Atelier").
+- **Da fare:** traduzioni **DE/FR/ES**; valutare se reintrodurre un cenno elegante al background
+  informatico dei fondatori; eventualmente una `heroImage` per la pagina.
