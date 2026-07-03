@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ArtworkView from '../../../components/ArtworkView.astro';
 import { getArtworkSlugs, getArtwork } from '../../../lib/queries';
 import { getLangFromUrl, useTranslations, pickLocale } from '../../../i18n/utils';
+import { urlForImage } from '../../../lib/sanity';
 
 export async function getStaticPaths() {
   const locales = ['it', 'de', 'fr', 'es'] as const;
@@ -18,8 +19,11 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const title = pickLocale(artwork.title, lang);
 const description = pickLocale(artwork.shortDescription, lang) || t('collection.intro');
+const ogImage = artwork.mainImage?.asset
+  ? urlForImage(artwork.mainImage).width(1200).height(630).fit('crop').format('jpg').url()
+  : undefined;
 ---
 
-<BaseLayout title={title} description={description} path={`/collection/${slug}`}>
+<BaseLayout title={title} description={description} path={`/collection/${slug}`} image={ogImage}>
   <ArtworkView artwork={artwork} lang={lang} />
 </BaseLayout>

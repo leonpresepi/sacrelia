@@ -447,3 +447,27 @@ oro `#CBAC6A`/bronzo `#A9885F` su avorio, serif Cormorant Garamond): **I La Stel
   1. 🔐 **revocare i vecchi token** Cloudflare/Sanity (vedi 10-bis).
   2. Valutare `noindex` sull'anteprima `*.workers.dev` (ora che l'apex è live, per evitare duplicati;
      i canonical puntano già a sacrelia.com, quindi rischio basso).
+
+## 14. Rifiniture tecniche SEO/social (FATTO 2026-07-03)
+
+Chiusi i "quick-win" tecnici emersi dall'audit di completezza (il sito è forte tecnicamente, il
+grosso che manca sono i **contenuti reali** — vedi lista sotto):
+- **`og:image` (anteprima social):** prima **mancava del tutto**. Aggiunto in `BaseLayout` (prop
+  `image`, con `og:image`/`twitter:image` + width/height + `twitter:title/description`).
+  - Default di brand generato: **`public/og-default.png`** (1200×630, cielo notturno + stella +
+    wordmark "SACRELIA", font Cormorant embedded via sharp).
+  - **Schede opera e articolo** passano la **foto reale** (copertina Sanity 1200×630 jpg) come og:image
+    (4 pagine slug: collection/journal, root + `[lang]`).
+- **Pagina 404** brand-consistent: `src/pages/404.astro`.
+- **Dati strutturati `Organization`** (nome, url, logo `icon-512.png`) in `BaseLayout` su tutte le pagine.
+- **Icone:** generate `apple-touch-icon.png` (180, iOS), `icon-512.png`, `favicon-32.png` (via sharp
+  dalla stella-sigillo); **rimossa** la vecchia `favicon.ico` nera. Link aggiunti in `BaseLayout`.
+- Script di generazione asset: eseguito una tantum con sharp (non versionato); PNG in `public/`.
+
+**Ancora da fare (dall'audit):**
+- **Analytics** — consigliato **Cloudflare Web Analytics** (gratis, cookieless → niente banner):
+  va abilitato dal dashboard (Analytics → Web Analytics → Add a site → token beacon) poi si aggiunge
+  lo snippet in `BaseLayout`. **Passo utente.**
+- **Contenuti reali** (foto HD, `siteSettings`, testi pagine, **testo legale privacy/cookie**), form
+  Web3Forms attivo, **storia d'origine del brand** (heritage), primo articolo Journal.
+- Email professionale (Google Workspace) — setup in corso.
