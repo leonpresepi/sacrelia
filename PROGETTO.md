@@ -470,10 +470,19 @@ grosso che manca sono i **contenuti reali** — vedi lista sotto):
   dalla stella-sigillo); **rimossa** la vecchia `favicon.ico` nera. Link aggiunti in `BaseLayout`.
 - Script di generazione asset: eseguito una tantum con sharp (non versionato); PNG in `public/`.
 
+**Analytics & SEO tecnica (FATTO 2026-07-03):**
+- **Cloudflare Web Analytics** attivo: beacon (RUM cookieless, token `08d50efc…`) in `BaseLayout`
+  (auto-inject NON funziona sui Worker → snippet manuale). Live e verificato.
+- **Google Search Console** verificato (proprietà Domain, via integrazione Cloudflare; TXT
+  `google-site-verification` nel DNS). **Sitemap NON inviata di proposito** → al lancio (vedi callout in cima).
+- **`noindex` soft-launch** attivo su tutte le pagine (toggle `BaseLayout`).
+- **Fix 404 (Worker):** aggiunto **`wrangler.jsonc`** con `assets.not_found_handling: "404-page"` →
+  il Worker ora serve la `404.html` di brand (prima restituiva un 404 a corpo vuoto). Status 404 corretto.
+- ⚠️ **Nota deploy:** l'auto-deploy Cloudflare su push di Git è **incostante** (spesso tarda/salta);
+  finora sbloccato forzando col **Deploy Hook** (POST all'URL builds). Il `wrangler.jsonc` esplicito
+  potrebbe stabilizzarlo; da verificare. Se un push non va live in pochi minuti → forzare col hook.
+
 **Ancora da fare (dall'audit):**
-- **Analytics** — consigliato **Cloudflare Web Analytics** (gratis, cookieless → niente banner):
-  va abilitato dal dashboard (Analytics → Web Analytics → Add a site → token beacon) poi si aggiunge
-  lo snippet in `BaseLayout`. **Passo utente.**
 - **Contenuti reali** (foto HD, `siteSettings`, testi pagine, **testo legale privacy/cookie**), form
   Web3Forms attivo, **storia d'origine del brand** (heritage), primo articolo Journal.
 - Email professionale (Google Workspace) — setup in corso.
