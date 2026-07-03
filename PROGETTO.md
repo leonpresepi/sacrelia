@@ -438,11 +438,12 @@ oro `#CBAC6A`/bronzo `#A9885F` su avorio, serif Cormorant Garamond): **I La Stel
   di terzi, già registrato (IONOS) — non è nostro.
 - **Custom domain aggiunto al Worker `sacrelia`** → `https://sacrelia.com` **HTTP 200**, certificato
   SSL valido (Google Trust Services, auto-emesso da Cloudflare in ~9 min), canonical già = apex.
+- **"Always Use HTTPS" (FATTO 2026-07-03):** `http://` → `301` → `https://` (path preservato).
+- **`www.sacrelia.com` (FATTO 2026-07-03):** redirect **301 → apex**. Metodo: la via "custom domain
+  del Worker" dava *"No zones match www.sacrelia.com"* → usato invece **record DNS CNAME `www`→`sacrelia.com`
+  (Proxied 🟠) + Page Rule** `www.sacrelia.com/*` → `https://sacrelia.com/$1` (301). Path preservato.
+- **Routing canonicalizzato:** ogni variante (http/https, con/senza www) finisce su `https://sacrelia.com`.
 - **Da fare (utente, non bloccante):**
-  1. **`www.sacrelia.com`**: non attivo. Se lo si vuole, aggiungere come custom domain + redirect
-     www → apex (l'apex resta canonico).
-  2. **"Always Use HTTPS"** su Cloudflare (SSL/TLS → Edge Certificates): al momento `http://` risponde
-     200 senza redirect forzato a https → attivarlo per SEO/sicurezza.
-  3. 🔐 **revocare i vecchi token** Cloudflare/Sanity (vedi 10-bis).
-  4. Valutare `noindex` sull'anteprima `*.workers.dev` (ora che l'apex è live, per evitare duplicati;
+  1. 🔐 **revocare i vecchi token** Cloudflare/Sanity (vedi 10-bis).
+  2. Valutare `noindex` sull'anteprima `*.workers.dev` (ora che l'apex è live, per evitare duplicati;
      i canonical puntano già a sacrelia.com, quindi rischio basso).
