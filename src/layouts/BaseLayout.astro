@@ -27,6 +27,10 @@ const t = useTranslations(lang);
 const siteName = 'Sacrelia';
 const fullTitle = title ? `${title} — ${siteName}` : siteName;
 const canonical = new URL(localizePath(path, lang), Astro.site);
+
+// ⚠️ SOFT LAUNCH: noindex temporaneo finché i contenuti non sono pronti (sito ancora "scheletrico").
+// AL LANCIO: mettere `noindex = false` + inviare la sitemap in Search Console (vedi PROGETTO.md).
+const noindex = true;
 // og:image: URL assoluto (Sanity già assoluto; altrimenti risolto sul dominio del sito).
 const ogImage = new URL(image ?? '/og-default.png', Astro.site).toString();
 const orgLogo = new URL('/icon-512.png', Astro.site).toString();
@@ -53,6 +57,7 @@ const orgJsonLd = {
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
 
     {/* hreflang reciproci per ogni lingua + x-default (root, inglese) */}

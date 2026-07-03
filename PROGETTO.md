@@ -2,7 +2,13 @@
 
 > Documento vivo. Raccoglie visione, requisiti e decisioni del progetto.
 > Aggiornare a ogni nuova informazione rilevante.
-> Ultimo aggiornamento: 2026-07-01
+> Ultimo aggiornamento: 2026-07-03
+
+> ## ⚠️ AZIONI AL LANCIO (da non dimenticare)
+> - **Togliere il `noindex`**: in `src/layouts/BaseLayout.astro` mettere `const noindex = false`
+>   (ora è `true` per soft-launch: il sito NON è indicizzabile finché i contenuti sono scheletrici).
+> - **Inviare la sitemap** in Google Search Console (`sitemap-index.xml`) — vedi sez. "Analytics/SEO".
+> - ⏱️ Farlo **entro fine agosto / inizio settembre** per essere indicizzati prima del picco ricerche ott-dic.
 
 ---
 
