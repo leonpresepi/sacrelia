@@ -90,5 +90,13 @@ const orgJsonLd = {
       <slot />
     </main>
     <Footer />
+
+    {/* Cloudflare Web Analytics — RUM cookieless (nessun banner richiesto) */}
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "08d50efcbf69414baf876a425b435d6f"}'
+    ></script>
   </body>
 </html>
