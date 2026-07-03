@@ -1,0 +1,11 @@
+{
+  // Configurazione del deploy Cloudflare (Worker con asset statici del sito Astro).
+  // Serve soprattutto per `not_found_handling`: sulle URL inesistenti mostra la 404.html
+  // di brand invece di un 404 "nudo".
+  "name": "sacrelia",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
