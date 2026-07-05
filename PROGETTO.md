@@ -501,5 +501,8 @@ mai "lusso", prestigio percepito).
   (slug `atelier`), campi title/lead/body/seoDescription in **EN (default) + IT**; DE/FR/ES in
   fallback EN finché non tradotte. Creato via `sanity documents create --replace` (CLI loggato).
   Editabile dallo Studio (Pagina "Atelier").
-- **Da fare:** traduzioni **DE/FR/ES**; valutare se reintrodurre un cenno elegante al background
-  informatico dei fondatori; eventualmente una `heroImage` per la pagina.
+- **Traduzioni DE/FR/ES (FATTO 2026-07-05):** Atelier tradotto in tutte e 5 le lingue, con termini
+  culturali propri (*Krippe* DE, *crèche* FR, *belén* ES). Documento `page-atelier` aggiornato via
+  `sanity documents create --replace` (title 5 lingue, body 6 blocchi × 5 lingue).
+- **Da fare:** valutare se reintrodurre un cenno elegante al background informatico dei fondatori;
+  eventualmente una `heroImage` per la pagina Atelier.
